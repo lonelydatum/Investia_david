@@ -1,5 +1,11 @@
 const banner = document.getElementById('banner')
-const size = {w:banner.offsetWidth, h:banner.offsetHeight}
+import {canvasMaker} from './mask.js'
+const data = {
+	t1: { id: "t1", read: 1.5 }	,
+	t2: { id: "t2", read: 1.8 }	,
+	t3: { id: "t3", read: 2.5 }	,
+	t4: { id: "t4", read: 2.5 }	,
+}
 
 gsap.defaults({
   ease: "power2.out"
@@ -7,110 +13,52 @@ gsap.defaults({
 
 
 
-const {w, h} = size
-
-
-const peeps = {
-	david: {
-		t1: 1.2,
-		t2: 2.5,
-		t3: 2.2,
-		t4: 3.5
-	},
-	laurie: {
-		t1: 1.2,
-		t2: 2,
-		t3: 2,
-		t4: 3.3
-	}
+const size = {
+	w:banner.offsetWidth, 
+	h:banner.offsetHeight,
+	ww:banner.offsetWidth*2, 
+	hh:banner.offsetHeight*2
 }
 
-const BG = 12
+gsap.defaults({
+  ease: "power2.out"
+});
 
-function init2(obj){
-	
+
+
+
+
+function text(data){
+	const {id, read} = data
 	const tl = new TimelineMax()
-	const data = peeps[obj.name]
+	tl.set(`#${id} img`, {display:"block"})
+	tl.fromTo(`#${id}`, {duration:.5, opacity:0}, {opacity:1})
 
-
-	tl.set(".frame1", {opacity:1})
-	
-	// return
-	TweenLite.to(".bg", BG, {scale:.5, ...obj.tween, ease:Linear.easeNone})
-	
-
-	const IN = .5
-	const OUT = .3
-
-	
-
-	tl.from(".t2",  {duration:IN, opacity:0}, `+=${data.t1}`)
-	tl.to(".t2",  {duration:OUT, opacity:0}, `+=${data.t2}`)
-
-	tl.from(".t3",  {duration:IN, opacity:0})
-	tl.to(".t3",  {duration:OUT, opacity:0}, `+=${data.t3}`)
-
-	tl.from(".t4",  {duration:IN, opacity:0})
-
-	tl.add("done", `+=${data.t4}`)
-	tl.to(".t4",  {duration:OUT, opacity:0}, "done")
-	tl.to(".t1",  {duration:IN, opacity:0}, "done")
-	tl.from(".t5",  {duration:IN, opacity:0})
-
-	
-
-	
-
-	
+	tl.add( ()=>{
+		canvasMaker(id, .38) 
+	}, `+=${read}`)
 
 	return tl
 }
 
 
 
+function start(){
+	const tl = new TimelineMax({
 
-
-
-function init(){
-	
-	const tl = new TimelineMax({onComplete:()=>{
-	
-	}})
-
+	})
 
 	tl.set(".frame1", {opacity:1})
 
-	
+	tl.add(text(data.t1), 0)
+	tl.add(text(data.t2), "+=.6")
+	tl.add(text(data.t3), "+=.6")
+	tl.add(text(data.t4), "+=.6")
 
-	TweenLite.to(".bg", 13, {x:-size.w/2, y:-size.h/2, scale:.5, ease:Linear.easeNone, onComplete:()=>{
-		// alert("sldkfj")
-	}})
+	tl.from("#t5", {duration: .3, opacity:0}, "+=.6")
 
-	const IN = .5
-	const OUT = .3
 
-	// tl.from(".t1", IN, {opacity:0})
-	tl.to(".t1",  {duration:OUT, opacity:0}, "+=2.3")
-
-	tl.from(".t2",  {duration:IN, opacity:0}, "+=.2")
-	tl.to(".t2",  {duration:OUT, opacity:0}, "+=2")
-
-	tl.from(".t3",  {duration:IN, opacity:0})
-	tl.to(".t3",  {duration:OUT, opacity:0}, "+=3.7")
-
-	tl.from(".t4",  {duration:IN, opacity:0})
-
-	
-
-	
-
-	
-
-	return tl
 }
 
 
-
-
-
-export {size, init, init2, BG, peeps}
+export {start}
